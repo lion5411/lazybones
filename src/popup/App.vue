@@ -9,8 +9,8 @@ export default {
   components: { AppTitle },
   methods: {
     openSetting() {
-      browser.tabs.create({
-        url: browser.extension.getURL("index.html"),
+      chrome.tabs.create({
+        url: chrome.extension.getURL("index.html"),
       });
     },
   },

@@ -9,6 +9,7 @@
     "build:watch": "vue-cli-service build --watch"
   },
   "dependencies": {
+    "@types/chrome": "0.0.160",
     "core-js": "^3.6.5",
     "vue": "^3.0.0"
   },
@@ -35,7 +36,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "no-unused-vars": "off"
+    }
   },
   "browserslist": [
     "> 1%",

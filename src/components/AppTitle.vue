@@ -7,12 +7,14 @@
 <script>
 export default {
   name: "AppTitle",
-  mounted() {
-    browser.runtime.sendMessage({});
-  },
+  // mounted() {
+  //   chrome.runtime.sendMessage({}, (e) => {
+  //     console.log("after mounted", e);
+  //   });
+  // },
   computed: {
     defaultText() {
-      return browser.i18n.getMessage("extName");
+      return chrome.i18n.getMessage("extName");
     },
   },
 };
