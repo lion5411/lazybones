@@ -1,15 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
+  <img alt="Vue logo" :src="logo" />
   <AppTitle msg="Welcome to Your Vue.js App" />
+  <AlarmCard />
 </template>
 
 <script>
 import AppTitle from "./components/AppTitle.vue";
-
+import AlarmCard from "./components/AlarmCard.vue";
+import logo from "./assets/logo.png";
 export default {
   name: "App",
   components: {
     AppTitle,
+    AlarmCard,
+  },
+  setup() {
+    return { logo };
   },
 };
 </script>
