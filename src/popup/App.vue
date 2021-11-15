@@ -56,7 +56,6 @@ export default {
           action: "SELECT_ALL",
         },
         function(res) {
-          console.log("111", res);
           updateList(res.response);
         }
       );

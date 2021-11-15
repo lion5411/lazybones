@@ -1,11 +1,17 @@
 <template>
   <div id="alarm-card">
-    <div class="div-left-img"><image :src="iconPuchHole" /></div>
+    <div class="div-left-img"><img :src="iconPuchHole" /></div>
     <div class="div-right-content">
-      <input v-model="title" />
-      <textarea v-model="content" />
-      <div><AlarmInfoButtonGroup :alarmInfo="alarmInfo" /></div>
-      <button @click="onClick">click</button>
+      <input v-model="title" @blur="updateData()" />
+      <textarea v-model="content" @blur="updateData()" />
+      <div>
+        <AlarmInfoButtonGroup
+          :alarmInfo="alarmInfo"
+          :alarmId="alarmId"
+          @updateData="updateData"
+        />
+      </div>
+      <button @click="deleteData">click</button>
     </div>
   </div>
 </template>
@@ -14,52 +20,46 @@
 import AlarmInfoButtonGroup from "./AlarmInfoButtonGroup.vue";
 import iconPuchHole from "../assets/note-punch-hole.svg";
 import { toRefs } from "@vue/reactivity";
+import { useStore } from "vuex";
+
 export default {
   name: "AlarmCard",
   components: { AlarmInfoButtonGroup },
   props: {
     alarmItem: {
+      alarmId: Number,
       title: String,
       content: String,
       alarmInfo: Object,
     },
   },
   setup(props) {
-    const updateData = (item) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "UPDATE",
-          records: { ...item, title: "업데이트 완료" },
-        },
-        (e) => {
-          console.log("this is callback", e);
-        }
-      );
+    const store = useStore();
+    const { alarmId, title, content, alarmInfo } = toRefs(props.alarmItem);
+    const updateAlarm = (alarm) => store.dispatch("updateAlarm", alarm);
+    const deleteAlarm = (alarmId) => store.dispatch("deleteAlarm", alarmId);
+
+    const updateData = (isActivated) => {
+      const newItem = {
+        alarmId: alarmId.value,
+        title: title.value,
+        content: content.value,
+        alarmInfo: alarmInfo.value,
+      };
+      newItem.alarmInfo.isActivated =
+        isActivated ?? alarmInfo.value.isActivated;
+      updateAlarm(newItem);
     };
 
-    const deleteData = (alarmId) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "DELETE",
-          key: alarmId,
-        },
-        (e) => {
-          console.log("this is callback", e);
-        }
-      );
-    };
-
-    const { title, content, alarmInfo } = toRefs(props.alarmItem);
-    console.log(title, content, alarmInfo);
-    const onClick = () => {
-      console.log(props);
+    const deleteData = () => {
+      deleteAlarm(alarmId.value);
     };
 
     return {
+      alarmId,
       title,
       content,
       alarmInfo,
-      onClick,
       iconPuchHole,
       updateData,
       deleteData,

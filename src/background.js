@@ -16,7 +16,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log("Hello from the background", request, sender);
   switch (request.action) {
     case "INSERT":
-      idb.insertRecords(request.records, STORE_NAME_ALARM_CONTENT);
+      idb
+        .insertRecords(request.records, STORE_NAME_ALARM_CONTENT)
+        .then((res) => {
+          sendResponse(res);
+        });
       break;
     case "SELECT_BY_KEY":
       idb.getRecordByKey(request.key, STORE_NAME_ALARM_CONTENT).then((res) => {

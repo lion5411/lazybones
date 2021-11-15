@@ -41,9 +41,10 @@ export default class IndexedDB {
       const transaction = this.db.transaction(storeName, "readwrite");
       const objectStore = transaction.objectStore(storeName);
       return new Promise((resolve, reject) => {
+        const result = [];
         transaction.oncomplete = function() {
           console.log("ALL INSERT TRANSACTIONS COMPLETE.");
-          resolve(true);
+          resolve(result);
         };
         transaction.onerror = function() {
           console.log("PROBLEM INSERTING RECORDS.");
@@ -51,8 +52,9 @@ export default class IndexedDB {
         };
         records.forEach((data) => {
           let request = objectStore.add(data);
-          request.onsuccess = function() {
+          request.onsuccess = function(event) {
             console.log("Added: ", data);
+            result.push(event.target.result);
           };
         });
       });
@@ -90,7 +92,6 @@ export default class IndexedDB {
       if (cursor) {
         let key = cursor.key;
         let value = cursor.value;
-        console.log(key, value);
         result.push(cursor.value);
         cursor.continue();
       } else {
