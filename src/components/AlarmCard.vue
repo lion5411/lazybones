@@ -2,9 +2,9 @@
   <div id="alarm-card">
     <div class="div-left-img"><image :src="iconPuchHole" /></div>
     <div class="div-right-content">
-      <input v-model="alarm.title" />
-      <textarea v-model="alarm.content" />
-      <div><AlarmInfoButtonGroup :alarmInfo="alarm.alarmInfo" /></div>
+      <input v-model="title" />
+      <textarea v-model="content" />
+      <div><AlarmInfoButtonGroup :alarmInfo="alarmInfo" /></div>
       <button @click="onClick">click</button>
     </div>
   </div>
@@ -13,27 +13,57 @@
 <script>
 import AlarmInfoButtonGroup from "./AlarmInfoButtonGroup.vue";
 import iconPuchHole from "../assets/note-punch-hole.svg";
+import { toRefs } from "@vue/reactivity";
 export default {
   name: "AlarmCard",
   components: { AlarmInfoButtonGroup },
-
-  setup() {
-    const alarm = {
-      title: "새알람2",
-      content: "이따 이거 해야해2",
-      alarmInfo: {
-        isActivated: true,
-        alarmCycle: "ONCE",
-        alarmDate: 1,
-        alarmTime: 16,
-      },
+  props: {
+    alarmItem: {
+      title: String,
+      content: String,
+      alarmInfo: Object,
+    },
+  },
+  setup(props) {
+    const updateData = (item) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "UPDATE",
+          records: { ...item, title: "업데이트 완료" },
+        },
+        (e) => {
+          console.log("this is callback", e);
+        }
+      );
     };
 
+    const deleteData = (alarmId) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "DELETE",
+          key: alarmId,
+        },
+        (e) => {
+          console.log("this is callback", e);
+        }
+      );
+    };
+
+    const { title, content, alarmInfo } = toRefs(props.alarmItem);
+    console.log(title, content, alarmInfo);
     const onClick = () => {
-      console.log(alarm);
+      console.log(props);
     };
 
-    return { alarm, onClick, iconPuchHole };
+    return {
+      title,
+      content,
+      alarmInfo,
+      onClick,
+      iconPuchHole,
+      updateData,
+      deleteData,
+    };
   },
 };
 </script>

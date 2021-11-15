@@ -1,24 +1,15 @@
 <template>
   <img alt="Vue logo" :src="logo" />
   <AppTitle msg="Welcome to Your Vue.js App" />
-  <AlarmCard />
-  <button @click="insertData">insert</button>
-  <button @click="getAllRecord">get all</button>
-  <button @click="getDetail">detail</button>
+  <AlarmCard v-for="item in alarmList" :key="item.alarmId" :alarmItem="item" />
+  <button @click="addNewAlarm">새할일 만들기</button>
+
   <div>
     <ul>
       <li v-for="item in alarmList" :key="item.alarmId">
         {{ item.title }}
         <button @click="updateData(item)">update</button>
         <button @click="deleteData(item.alarmId)">delete</button>
-        <div v-if="state.showDetail">
-          <div>{{ item.title }}</div>
-          <div>{{ item.content }}</div>
-          <div>{{ item.alarmCycle }}</div>
-          <div>{{ item.alarmDate }}</div>
-          <div>{{ item.alarmTime }}</div>
-          <div>{{ item.isActivated }}</div>
-        </div>
       </li>
     </ul>
   </div>
@@ -29,7 +20,8 @@ import AppTitle from "./components/AppTitle.vue";
 import AlarmCard from "./components/AlarmCard.vue";
 import logo from "./assets/logo.png";
 import { useStore } from "vuex";
-import { computed, reactive } from "@vue/reactivity";
+import { computed } from "@vue/reactivity";
+import { onMounted } from "@vue/runtime-core";
 
 export default {
   name: "App",
@@ -40,101 +32,30 @@ export default {
   setup() {
     const store = useStore();
     const alarmList = computed(() => store.state.alarm.alarmList);
-    const updateList = (alarmList) => store.commit("setAlarmList", alarmList);
-    const getAlarmDetail = (alarm) => store.commit("setSelectedAlarm", alarm);
+    const setDefaultList = (alarmList) =>
+      store.commit("setAlarmList", alarmList);
+    const addNewAlarm = () => store.dispatch("addNewAlarm");
 
-    const state = reactive({
-      showDetail: false,
+    onMounted(() => {
+      getAllRecord();
     });
+    console.log(alarmList);
 
-    const openSetting = () => {
-      chrome.tabs.create({
-        url: chrome.extension.getURL("index.html"),
-      });
-    };
-    const insertData = () => {
-      chrome.runtime.sendMessage(
-        {
-          action: "INSERT",
-          records: [
-            {
-              title: "새알람2",
-              content: "이따 이거 해야해2",
-              isActivated: true,
-              alarmCycle: "ONCE",
-              alarmDate: 1,
-              alarmTime: 16,
-            },
-          ],
-        },
-        (e) => {
-          console.log("this is callback", e);
-        }
-      );
-    };
     const getAllRecord = () => {
       chrome.runtime.sendMessage(
         {
           action: "SELECT_ALL",
         },
         function(res) {
-          console.log("111", res);
-          updateList(res);
+          setDefaultList(res);
         }
       );
-    };
-
-    const updateData = (item) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "UPDATE",
-          records: { ...item, title: "업데이트 완료" },
-        },
-        (e) => {
-          console.log("this is callback", e);
-        }
-      );
-    };
-
-    const deleteData = (alarmId) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "DELETE",
-          key: alarmId,
-        },
-        (e) => {
-          console.log("this is callback", e);
-        }
-      );
-    };
-
-    const getDetail = () => {
-      state.showDetail = !state.showDetail;
-      alarmList.forEach((v) => {
-        chrome.runtime.sendMessage(
-          {
-            action: "SELECT_BY_KEY",
-            key: v.alarmId,
-          },
-          function(res) {
-            console.log("222", res);
-            getAlarmDetail(res);
-          }
-        );
-      });
     };
 
     return {
       logo,
       alarmList,
-      updateList,
-      openSetting,
-      insertData,
-      getAllRecord,
-      updateData,
-      deleteData,
-      getDetail,
-      state,
+      addNewAlarm,
     };
   },
 };

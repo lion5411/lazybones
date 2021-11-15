@@ -5,12 +5,12 @@
     <span
       ><select v-model="alarmCycle">
         <option value="ONCE">한번만</option>
-        <option>매일</option>
-        <option>매주</option>
-        <option>매달</option>
+        <option value="DAILY">매일</option>
+        <option value="WEEKLY">매주</option>
+        <option value="MONTHLY">매달</option>
       </select></span
     >
-    <span
+    <span v-if="alarmCycle === 'MONTHLY'"
       ><select>
         <option>1일</option>
         <option>2일</option>
@@ -42,8 +42,8 @@ export default {
       alarmTime: Number,
     },
   },
-  setup(props) {
-    const { isActivated, alarmCycle, alarmDate, alarmTime } = toRefs(
+  setup(props, { emit }) {
+    const { isActivated, alarmCycle = "ONCE", alarmDate, alarmTime } = toRefs(
       props.alarmInfo
     );
     console.log(props, isActivated, alarmCycle, alarmDate, alarmTime);
