@@ -10,13 +10,15 @@
         <option value="MONTHLY">매달</option>
       </select></span
     >
-    <span v-if="alarmCycle === 'MONTHLY'"
-      ><select v-model="alarmDate">
-        <option>1일</option>
-        <option>2일</option>
-        <option>3일</option>
-        <option>4일</option>
+    <span v-if="alarmCycle === 'WEEKLY'"
+      ><select v-model="alarmWeek" @change="handleSelected">
+        <option v-for="week in weekRange" :key="week" :value="week">
+          {{ week }}</option
+        >
       </select></span
+    >
+    <span v-if="alarmCycle === 'MONTHLY' || alarmCycle === 'ONCE'"
+      ><button>{{ alarmDate }}</button></span
     >
     <span
       ><select v-model="alarmTime" @change="handleSelected">
@@ -32,12 +34,13 @@
 import { toRefs } from "@vue/reactivity";
 import iconAlarmOn from "@/assets/bell-on.svg";
 import iconAlarmOff from "@/assets/bell-off.svg";
-import { onUpdated } from "@vue/runtime-core";
+
 export default {
   props: {
     alarmInfo: {
       isActivated: Boolean,
       alarmCycle: String,
+      alarmWeek: String,
       alarmDate: Number,
       alarmTime: Number,
     },
@@ -45,7 +48,8 @@ export default {
   emits: ["updateData"],
   setup(props, { emit }) {
     const timeRange = [...Array(24).keys()];
-    const { isActivated, alarmCycle, alarmDate, alarmTime } = toRefs(
+    const weekRange = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+    const { isActivated, alarmCycle, alarmWeek, alarmDate, alarmTime } = toRefs(
       props.alarmInfo
     );
     const handleActivate = () => {
@@ -53,17 +57,20 @@ export default {
       emit("updateData", nextState);
     };
     const handleSelected = () => {
+      console.log(alarmWeek);
       emit("updateData");
     };
 
     return {
       timeRange,
+      weekRange,
       iconAlarmOn,
       iconAlarmOff,
       handleActivate,
       handleSelected,
       isActivated,
       alarmCycle,
+      alarmWeek,
       alarmDate,
       alarmTime,
     };

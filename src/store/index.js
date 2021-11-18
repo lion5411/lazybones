@@ -20,7 +20,8 @@ export default createStore({
         alarmInfo: {
           isActivated: false,
           alarmCycle: "ONCE",
-          alarmDate: null,
+          alarmWeek: null,
+          alarmDate: 1,
           alarmTime: 12,
         },
       };

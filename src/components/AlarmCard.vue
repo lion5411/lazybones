@@ -5,11 +5,7 @@
       <input v-model="title" @blur="updateData()" />
       <textarea v-model="content" @blur="updateData()" />
       <div>
-        <AlarmInfoButtonGroup
-          :alarmInfo="alarmInfo"
-          :alarmId="alarmId"
-          @updateData="updateData"
-        />
+        <AlarmInfoButtonGroup :alarmInfo="alarmInfo" @updateData="updateData" />
       </div>
       <button @click="deleteData">click</button>
     </div>
@@ -46,8 +42,19 @@ export default {
         content: content.value,
         alarmInfo: alarmInfo.value,
       };
+
       newItem.alarmInfo.isActivated =
         isActivated ?? alarmInfo.value.isActivated;
+      newItem.alarmInfo.alarmWeek =
+        alarmInfo.value.alarmCycle === "WEEKLY"
+          ? alarmInfo.value.alarmWeek || "MON"
+          : null;
+      newItem.alarmInfo.alarmDate = ["MONTHLY", "ONCE"].includes(
+        alarmInfo.value.alarmCycle
+      )
+        ? alarmInfo.value.alarmDate || 1
+        : null;
+
       updateAlarm(newItem);
     };
 
