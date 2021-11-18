@@ -1,13 +1,21 @@
 <template>
   <div id="alarm-card">
-    <div class="div-left-img"><img :src="iconPuchHole" /></div>
+    <div class="div-left-img"></div>
     <div class="div-right-content">
-      <input v-model="title" @blur="updateData()" />
-      <textarea v-model="content" @blur="updateData()" />
-      <div>
-        <AlarmInfoButtonGroup :alarmInfo="alarmInfo" @updateData="updateData" />
-      </div>
-      <button @click="deleteData">click</button>
+      <input
+        class="input-alarm-title"
+        v-model="title"
+        @blur="updateData()"
+        placeholder="제목을 입력하세요"
+      />
+      <textarea
+        class="textarea-alarm-content"
+        v-model="content"
+        @blur="updateData()"
+        placeholder="내용을 입력하세요"
+      />
+      <AlarmInfoButtonGroup :alarmInfo="alarmInfo" @updateData="updateData" />
+      <!-- <button @click="deleteData">click</button> -->
     </div>
   </div>
 </template>
@@ -75,18 +83,72 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less">
+// @colors: #81bbff, #ff7373, #ffc107, #bdbdbd;
+// @length: length(@colors);
+// @random: `Math.random(3) `;
+
 #alarm-card {
-  background-color: darkkhaki;
-  width: 500px;
+  width: 509px;
+  min-height: 134px;
+  max-height: 166px;
+
+  border: 5px solid #2f2f2f;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background-color: #81bbff;
+
   display: flex;
-}
-.div-left-img {
-  flex-basis: 10%;
-}
-.div-right-content {
-  flex-basis: 90%;
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 18px;
+
+  .div-left-img {
+    flex-basis: 10%;
+    padding: 14px 0;
+    background: repeat-y content-box url("../assets/note-punch-hole.svg");
+  }
+  .div-right-content {
+    flex-basis: 90%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+
+    padding: 19px 25px 16px 25px;
+
+    .input-alarm-title {
+      margin-bottom: 6px;
+
+      font-family: Noto Sans KR;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 26px;
+      color: #000000;
+
+      border: none;
+      &:focus {
+        outline: none;
+      }
+    }
+    .textarea-alarm-content {
+      margin-bottom: 6px;
+
+      font-family: Noto Serif KR;
+      font-size: 12px;
+      line-height: 17px;
+      color: #000000;
+
+      border: none;
+
+      resize: none;
+
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+      &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera*/
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
 }
 </style>
